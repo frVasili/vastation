@@ -1,5 +1,8 @@
 # VAStation
 
+> **Made with AI.** This project was written with AI coding agents: mostly Claude Code (Claude Opus 5.5),
+> with some help from Codex (GPT-6) subagents. A human directed the work and tested it on a real Wolf server.
+
 A game launcher for [Wolf](https://games-on-whales.github.io/wolf/stable/) (the Moonlight streaming host from
 Games on Whales) that looks and sounds like a 2000s console dashboard: a boot animation, a slow glass-and-fog
 background, navigation sounds, big type, and a row of artwork tiles. It replaces the stock "Wolf UI" as the
