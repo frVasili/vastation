@@ -1,0 +1,10 @@
+{
+  "name": "Ember",
+  "palette": {
+    "void": "#0c0403",
+    "deep": "#3a1008",
+    "accent": "#ff5a2b",
+    "highlight": "#ffd08a",
+    "text": "#fff6ee"
+  }
+}

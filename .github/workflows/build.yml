@@ -1,0 +1,95 @@
+name: Build VAStation
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: write
+concurrency:
+  group: vastation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GODOT_VERSION: 4.7.2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: godot
+        with:
+          path: |
+            ~/.local/bin/godot
+            ~/.local/share/godot/export_templates/4.7.2.stable
+          key: godot-linux-4.7.2
+      - name: Install Godot and templates
+        if: steps.godot.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -fL --retry 3 "$url/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" -o /tmp/godot.zip
+          curl -fL --retry 3 "$url/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" -o /tmp/templates.zip
+          mkdir -p ~/.local/bin ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          install -m 755 /tmp/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/.local/bin/godot
+          unzip -q /tmp/templates.zip -d /tmp/godot-templates
+          mv /tmp/godot-templates/templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+      - name: Install screenshot dependencies
+        run: |
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb xauth libgl1-mesa-dri libegl1 libgl1 libxkbcommon0
+      - name: Import, test and export
+        run: |
+          set -euo pipefail
+          godot --headless --path launcher --editor --import
+          tools/test_backend.sh
+          mkdir -p build
+          godot --headless --path launcher --export-release Linux "$PWD/build/vastation.x86_64"
+          test -s build/vastation.pck
+          # Themes, the top bar for apps and the start script ship as plain files next to the binary.
+          cp -r launcher/themes build/themes && rm -f build/themes/.gdignore
+          cp -r deploy/waybar build/waybar
+          install -m 755 deploy/startup-app.sh build/startup-app.sh
+          tar -czf build/vastation-linux.tar.gz -C build vastation.x86_64 vastation.pck themes waybar startup-app.sh
+      - name: Screenshots
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -euo pipefail
+          xvfb-run -a -s '-screen 0 1920x1080x24' tools/shots.sh build/shots/1280x720 1280x720
+          xvfb-run -a -s '-screen 0 1920x1080x24' tools/shots.sh build/shots/1560x720 1560x720
+      - name: Smoke test in deployment image
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The exported binary must start inside the image we deploy into (library check)
+          # and find its themes next to itself. Headless + mock backend: no GPU, no Wolf.
+          timeout 180 docker run --rm --user root --entrypoint /opt/vastation/vastation.x86_64 \
+            -v "$PWD/build:/opt/vastation:ro" -e VASTATION_BACKEND=mock -e VASTATION_SKIP_BOOT=1 \
+            ghcr.io/games-on-whales/base-app:edge \
+            --headless --quit-after 300 2>&1 | tee build/smoke.log
+          ! grep -E 'SCRIPT ERROR|error while loading shared libraries|^ERROR' build/smoke.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vastation-linux
+          path: build/vastation-linux.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: build/shots/
+      - name: Publish latest prerelease
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view latest >/dev/null 2>&1; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/latest" -f sha="$GITHUB_SHA" -F force=true
+            gh release edit latest --prerelease --title 'VAStation latest' --notes "Built from $GITHUB_SHA"
+          else
+            gh release create latest --target "$GITHUB_SHA" --prerelease --title 'VAStation latest' --notes "Built from $GITHUB_SHA"
+          fi
+          gh release upload latest build/vastation-linux.tar.gz --clobber

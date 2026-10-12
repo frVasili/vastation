@@ -1,0 +1,41 @@
+{
+  "_doc": "A tile is a title, artwork and a launch recipe. Game tiles (later version) use the same shape; see AGENTS.md.",
+  "categories": [
+    { "id": "games", "title": "Games" },
+    { "id": "emulation", "title": "Emulation" },
+    { "id": "media", "title": "Media" },
+    { "id": "system", "title": "System" }
+  ],
+  "tiles": [
+    { "id": "steam", "title": "Steam", "subtitle": "Your PC library, in Big Picture", "category": "games",
+      "art": { "logo": "steam", "cover": "", "accent": ["#16345c", "#2f7fd6"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Steam" } },
+    { "id": "minecraft", "title": "Minecraft", "subtitle": "Java Edition with Prism Launcher", "category": "games",
+      "art": { "logo": "prism", "cover": "", "accent": ["#1f5c2a", "#6fbf3b"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Prismlauncher" } },
+    { "id": "lutris", "title": "Lutris", "subtitle": "GOG, Epic, Battle.net and everything else", "category": "games",
+      "art": { "logo": "lutris", "cover": "", "accent": ["#5c3312", "#ff9a2e"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Lutris" } },
+    { "id": "retroarch", "title": "RetroArch", "subtitle": "Classic consoles and handhelds", "category": "emulation",
+      "art": { "logo": "retroarch", "cover": "", "accent": ["#1d1647", "#7b52ff"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "RetroArch" } },
+    { "id": "esde", "title": "EmulationStation", "subtitle": "GameCube, PS2, PS3, Wii U and Xbox libraries", "category": "emulation",
+      "art": { "logo": "esde", "cover": "", "accent": ["#5c1220", "#e0384f"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "EmulationStation" } },
+    { "id": "kodi", "title": "Kodi", "subtitle": "Films, shows and music", "category": "media",
+      "art": { "logo": "kodi", "cover": "", "accent": ["#0f3d5c", "#31afe1"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Kodi" } },
+    { "id": "internet", "title": "Internet", "subtitle": "Firefox web browser", "category": "media",
+      "art": { "logo": "firefox", "cover": "", "accent": ["#4a1a5c", "#ff7139"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Firefox" } },
+    { "id": "desktop", "title": "Desktop", "subtitle": "A full Linux desktop (Xfce)", "category": "system",
+      "art": { "logo": "xfce", "cover": "", "accent": ["#12405c", "#2ec4e0"], "shape": "square" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Desktop (xfce)" } },
+    { "id": "settings", "title": "Settings", "subtitle": "Sound, boot animation, about", "category": "system",
+      "art": { "logo": "", "glyph": "settings", "cover": "", "accent": ["#20263a", "#7f8fb0"], "shape": "square" },
+      "launch": { "type": "internal", "action": "settings" } },
+    { "id": "power", "title": "End Session", "subtitle": "Disconnect and close the launcher", "category": "system",
+      "art": { "logo": "", "glyph": "power", "cover": "", "accent": ["#3a1420", "#ff4d6a"], "shape": "square" },
+      "launch": { "type": "internal", "action": "end_session" } }
+  ]
+}

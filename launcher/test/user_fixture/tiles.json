@@ -1,0 +1,26 @@
+{
+  "categories": [
+    { "id": "extras", "title": "Extras" }
+  ],
+  "tiles": [
+    {
+      "id": "sunset-game", "title": "Sunset Drive", "subtitle": "A tile with a cover picture",
+      "category": "extras",
+      "art": { "cover": "sunset", "accent": ["#3a1a5c", "#ff6a88"], "shape": "cover" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Steam" }
+    },
+    {
+      "id": "wide-one", "title": "Wide Banner", "subtitle": "A banner-shaped tile without a picture",
+      "category": "extras",
+      "art": { "accent": ["#12405c", "#2ec4e0"], "shape": "banner" },
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Firefox" }
+    },
+    {
+      "id": "BROKEN TILE", "title": "This one is broken on purpose",
+      "category": "extras",
+      "launch": { "type": "wolf_app", "profile": "user", "app": "Steam" }
+    }
+  ],
+  "hide": ["kodi"],
+  "order": { "games": ["minecraft", "steam"] }
+}

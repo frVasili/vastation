@@ -1,0 +1,31 @@
+// VAStation's top bar for apps that run under sway (replaces the GoW default bar: see AGENTS.md).
+// HOME asks the launcher to take the stream back; the app keeps running.
+{
+  "layer": "top",
+  "position": "top",
+  "height": 44,
+  "spacing": 8,
+  "modules-left": ["custom/home"],
+  "modules-center": ["sway/window"],
+  "modules-right": ["pulseaudio", "custom/clock"],
+  "custom/home": {
+    "format": "HOME",
+    "tooltip": false,
+    "on-click": "touch /vastation-ipc/return"
+  },
+  "sway/window": {
+    "max-length": 60,
+    "tooltip": false
+  },
+  "pulseaudio": {
+    "format": "VOL {volume}%",
+    "format-muted": "MUTED",
+    "tooltip": false
+  },
+  "custom/clock": {
+    "format": "{}",
+    "tooltip": false,
+    "interval": 30,
+    "exec": "date +'%a %-d %b  %-I:%M %p'"
+  }
+}

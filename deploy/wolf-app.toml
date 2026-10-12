@@ -1,0 +1,42 @@
+# VAStation as a Wolf app. Add this block to Wolf's config.toml as the FIRST [[profiles.apps]] of the
+# profile that Moonlight lists (id = 'moonlight-profile-id' in a default Wolf config), with Wolf stopped
+# (Wolf rewrites its config while running). Then replace every /PATH/TO/WOLF with the host folder that
+# your Wolf container mounts as /etc/wolf, and set TZ to your time zone.
+[[profiles.apps]]
+icon_png_path = 'vastation/icon.png'  # relative to /etc/wolf; copy deploy/icon.png to /PATH/TO/WOLF/vastation/
+start_virtual_compositor = true
+title = 'VAStation'
+
+    [profiles.apps.runner]
+    # No special privileges: these are the capabilities the stock GoW Firefox app uses (controller hot-plug).
+    base_create_json = '''{
+  "HostConfig": {
+    "IpcMode": "host",
+    "CapAdd": ["NET_RAW", "MKNOD", "NET_ADMIN"],
+    "Privileged": false,
+    "DeviceCgroupRules": ["c 13:* rmw", "c 244:* rmw"]
+  }
+}'''
+    devices = []
+    env = [
+        'GOW_REQUIRED_DEVICES=/dev/input/event* /dev/dri/* /dev/nvidia*',
+        # Wolf's API socket inside this container. Wolf fills in the real source of the mount below.
+        'WOLF_SOCKET_PATH=/var/run/wolf/wolf.sock',
+        # The socket is root-only, so the launcher runs as root inside its container.
+        'UNAME=root',
+        'TZ=America/New_York',
+        # Host path of the vastation folder: lets the launcher give apps the top bar with the HOME button.
+        'VASTATION_HOST_DIR=/PATH/TO/WOLF/vastation'
+    ]
+    # A stock public image; the launcher itself is mounted into it.
+    image = 'ghcr.io/games-on-whales/base-app:edge'
+    mounts = [
+        '/var/run/wolf/wolf.sock:/var/run/wolf/wolf.sock',
+        '/PATH/TO/WOLF/vastation/app:/opt/vastation:ro',
+        '/PATH/TO/WOLF/vastation/app/startup-app.sh:/opt/gow/startup-app.sh:ro',
+        '/PATH/TO/WOLF/vastation/user:/opt/vastation-user:ro',
+        '/PATH/TO/WOLF/vastation/state:/opt/vastation-state'
+    ]
+    name = 'VAStation'
+    ports = []
+    type = 'docker'
