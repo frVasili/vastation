@@ -21,6 +21,14 @@ thing Moonlight opens into, and works with a controller or with touch on a phone
   files into a folder: see [docs/TILES.md](docs/TILES.md) and [docs/THEMES.md](docs/THEMES.md).
 - Idles cheaply: 30 frames per second on the home screen, 2 while an app is in front.
 
+## Make it yours
+Your own tiles with your own pictures, and themes that change colours, sounds and logos, all without
+rebuilding anything:
+
+| Your own tiles ([guide](docs/TILES.md)) | A theme ([guide](docs/THEMES.md)) |
+|---|---|
+| ![Custom tiles](docs/screenshots/user-tiles.png) | ![Ember theme](docs/screenshots/theme-ember.png) |
+
 ## What you need
 - A working Wolf install (the `stable` image, config version 7) that you can already stream from with Moonlight.
 - The apps of Wolf's default `user` profile in your Wolf config (they are there unless you removed them).
