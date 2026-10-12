@@ -25,6 +25,9 @@ static func _roots() -> Array[String]:
 static func available() -> Array[String]:
 	var out: Array[String] = ["default"]
 	for root in _roots():
+		# res://themes only exists when running from the project; an empty user folder may lack themes/.
+		if not DirAccess.dir_exists_absolute(root):
+			continue
 		for d in DirAccess.get_directories_at(root):
 			if d not in out and FileAccess.file_exists(root.path_join(d).path_join("theme.json")):
 				out.append(d)
